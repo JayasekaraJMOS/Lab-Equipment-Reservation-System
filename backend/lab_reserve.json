@@ -1,0 +1,186 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alex Chen",
+      "email": "student@university.edu",
+      "password": "$2a$10$UNzork5wd8wJulmoskqbOOddC1rFnVzha6kdEW97ed/k8ipXCtc16",
+      "role": "student",
+      "department": "Electrical & Electronic Engineering",
+      "created_at": "2026-09-30T03:41:49.510Z"
+    },
+    {
+      "id": 2,
+      "name": "Dr. Robert Vance",
+      "email": "tech@university.edu",
+      "password": "$2a$10$aPyyU/YcB4IFed1XJGN1yO7TGSEPPK80llYe7L/dNDhrkspaUJSKe",
+      "role": "tech",
+      "department": "Department of EEE",
+      "created_at": "2026-09-30T03:41:49.513Z"
+    },
+    {
+      "id": 3,
+      "name": "Prof. Sarah Jenkins",
+      "email": "admin@university.edu",
+      "password": "$2a$10$6UeVhsTY8scICKvBttmPfOxGDfR7o6fPDiMJhPdYqF28zllbDHz3m",
+      "role": "admin",
+      "department": "Faculty of Engineering",
+      "created_at": "2026-09-30T03:41:49.515Z"
+    }
+  ],
+  "labs": [
+    {
+      "id": 1,
+      "name": "High-Frequency Signal Lab",
+      "code": "LAB-EEE-101",
+      "location": "Room 302, Level 3",
+      "building": "Engineering Block A",
+      "supervisor": "Dr. Vance"
+    },
+    {
+      "id": 2,
+      "name": "Robotics & Prototyping Workshop",
+      "code": "LAB-EEE-204",
+      "location": "Room 112, Level 1",
+      "building": "Innovation Center",
+      "supervisor": "Eng. Marcus"
+    },
+    {
+      "id": 3,
+      "name": "Embedded Systems & IoT Lab",
+      "code": "LAB-EEE-305",
+      "location": "Room 408, Level 4",
+      "building": "Engineering Block B",
+      "supervisor": "Dr. Jenkins"
+    }
+  ],
+  "equipment": [
+    {
+      "id": 1,
+      "lab_id": 1,
+      "name": "Keysight 4-Channel Digital Storage Oscilloscope",
+      "category": "Oscilloscopes",
+      "model": "Keysight DSOX2004A",
+      "serial_number": "DSO-2026-001",
+      "status": "available",
+      "requires_approval": 0,
+      "max_hours_per_slot": 3,
+      "description": "70 MHz 4-channel oscilloscope with 50,000 wfms/sec update rate and built-in function generator.",
+      "specs": "Bandwidth: 70 MHz | Channels: 4 | Sample Rate: 2 GSa/s | Memory Depth: 1 Mpts",
+      "image_url": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=500&auto=format&fit=crop&q=60"
+    },
+    {
+      "id": 2,
+      "lab_id": 1,
+      "name": "Rohde & Schwarz RF Spectrum Analyzer",
+      "category": "Spectrum Analyzers",
+      "model": "R&S FSH4 (9 kHz to 3.6 GHz)",
+      "serial_number": "SA-R&S-0992",
+      "status": "available",
+      "requires_approval": 1,
+      "max_hours_per_slot": 4,
+      "description": "Handheld spectrum analyzer for high-frequency RF signal measurements, field testing, and antenna verification.",
+      "specs": "Frequency Range: 9 kHz - 3.6 GHz | DANL: -163 dBm | Resolution Bandwidth: 1 Hz to 3 MHz",
+      "image_url": "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=500&auto=format&fit=crop&q=60"
+    },
+    {
+      "id": 3,
+      "lab_id": null,
+      "name": "UltiMaker S5 Dual-Extrusion 3D Printer",
+      "category": "Rapid Prototyping",
+      "model": "UltiMaker S5 Advanced",
+      "serial_number": "3DP-ULT-502",
+      "status": "available",
+      "requires_approval": 0,
+      "max_hours_per_slot": 6,
+      "description": "Industrial-grade dual-extrusion 3D printer for precision engineering prototypes using PLA, ABS, and Tough PLA.",
+      "specs": "Build Volume: 330 x 240 x 300 mm | Layer Resolution: up to 20 microns | Filament Diameter: 2.85 mm",
+      "image_url": "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=500&auto=format&fit=crop&q=60"
+    },
+    {
+      "id": 4,
+      "lab_id": null,
+      "name": "Bantam Tools Desktop CNC PCB Milling Machine",
+      "category": "PCB Fabrication",
+      "model": "Bantam NextGen Milling",
+      "serial_number": "CNC-BTM-881",
+      "status": "maintenance",
+      "requires_approval": 1,
+      "max_hours_per_slot": 2,
+      "description": "High-precision desktop CNC mill specifically tailored for rapid double-sided printed circuit board prototyping.",
+      "specs": "Spindle Speed: 26,000 RPM | Repeatability: 0.006 mm | Max Travel: 140 x 114 x 32 mm",
+      "image_url": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&auto=format&fit=crop&q=60"
+    },
+    {
+      "id": 5,
+      "lab_id": 3,
+      "name": "NVIDIA Jetson AGX Orin Developer Kit",
+      "category": "AI & Embedded Computing",
+      "model": "NVIDIA Orin 64GB",
+      "serial_number": "AI-NV-ORIN-01",
+      "status": "available",
+      "requires_approval": 0,
+      "max_hours_per_slot": 4,
+      "description": "High-performance AI workstation board delivering up to 275 TOPS for robotics, autonomous machines, and computer vision.",
+      "specs": "GPU: 2048-core NVIDIA Ampere | CPU: 12-core Arm Cortex-A78AE | RAM: 64GB LPDDR5",
+      "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60"
+    },
+    {
+      "id": 6,
+      "lab_id": 3,
+      "name": "Tektronix Programmable Triple-Output DC Power Supply",
+      "category": "Power Electronics",
+      "model": "Tektronix PWS4305",
+      "serial_number": "PWR-TEK-4305",
+      "status": "available",
+      "requires_approval": 0,
+      "max_hours_per_slot": 3,
+      "description": "Precision programmable DC power supply featuring high voltage stability and low ripple noise.",
+      "specs": "Voltage Output: 0 - 30V | Current Output: 0 - 5A | Display Accuracy: 0.05%",
+      "image_url": "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?w=500&auto=format&fit=crop&q=60"
+    }
+  ],
+  "reservations": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "equipment_id": 1,
+      "start_time": "2026-10-01T04:30:00.000Z",
+      "end_time": "2026-10-01T06:30:00.000Z",
+      "purpose": "EE4207 Microprocessor Signal Analysis Lab Experiment",
+      "status": "approved",
+      "admin_notes": "Approved by Dr. Vance",
+      "created_at": "2026-09-30T03:41:49.536Z"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "equipment_id": 1,
+      "start_time": "2026-10-02T08:30:00.000Z",
+      "end_time": "2026-10-02T10:30:00.000Z",
+      "purpose": "Oscilloscope testing for EE4207 assignment",
+      "status": "approved",
+      "admin_notes": "Auto-approved by system",
+      "created_at": "2026-09-30T03:43:22.127Z"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "equipment_id": 1,
+      "start_time": "2026-10-04T04:30:00.000Z",
+      "end_time": "2026-10-04T06:30:00.000Z",
+      "purpose": "123",
+      "status": "approved",
+      "admin_notes": "Auto-approved by system",
+      "created_at": "2026-10-03T03:40:53.159Z"
+    }
+  ],
+  "maintenance_logs": [],
+  "counters": {
+    "users": 3,
+    "labs": 3,
+    "equipment": 6,
+    "reservations": 3,
+    "maintenance_logs": 0
+  }
+}

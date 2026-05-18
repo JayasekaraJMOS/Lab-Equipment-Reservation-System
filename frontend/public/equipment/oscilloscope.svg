@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" fill="none">
+  <defs>
+    <linearGradient id="background" x1="120" y1="30" x2="1090" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10203D"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="288" y1="190" x2="899" y2="562" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#CBD5E1"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="364" y1="258" x2="746" y2="466" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071426"/>
+      <stop offset="1" stop-color="#122D48"/>
+    </linearGradient>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" stroke="#38BDF8" stroke-opacity=".16"/>
+    </pattern>
+    <filter id="shadow" x="202" y="130" width="810" height="542" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+  <path fill="url(#background)" d="M0 0h1200v720H0z"/>
+  <circle cx="1020" cy="125" r="180" fill="#60A5FA" fill-opacity=".09"/>
+  <circle cx="145" cy="650" r="240" fill="#22D3EE" fill-opacity=".08"/>
+  <path d="M0 568h1200M0 604h1200" stroke="#BFDBFE" stroke-opacity=".1"/>
+  <ellipse cx="607" cy="571" rx="363" ry="37" fill="#061226" fill-opacity=".48" filter="url(#shadow)"/>
+  <g>
+    <rect x="273" y="170" width="654" height="395" rx="28" fill="#111827" stroke="#94A3B8" stroke-width="5"/>
+    <rect x="291" y="188" width="618" height="359" rx="19" fill="url(#metal)"/>
+    <rect x="326" y="224" width="440" height="278" rx="12" fill="#0F172A"/>
+    <rect x="344" y="242" width="404" height="242" rx="7" fill="url(#screen)"/>
+    <rect x="344" y="242" width="404" height="242" rx="7" fill="url(#grid)"/>
+    <path d="M349 365h47l20-1 18-61 25 139 28-103 18 26h45l17-45 22 71 22-25 34-1 19-1 20-67 20 85 23-39h25" stroke="#38BDF8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M350 366h40" stroke="#FBBF24" stroke-width="3" stroke-dasharray="7 9"/>
+    <text x="362" y="275" fill="#BAE6FD" font-family="Arial,sans-serif" font-size="17" font-weight="700" letter-spacing="2">CH1   2.00 V   1.00 ms</text>
+    <text x="361" y="463" fill="#67E8F9" font-family="Arial,sans-serif" font-size="14" letter-spacing="2">70 MHz  ·  4 CHANNELS</text>
+    <g fill="#334155" stroke="#64748B" stroke-width="4">
+      <circle cx="824" cy="264" r="34"/><circle cx="824" cy="351" r="34"/><circle cx="824" cy="438" r="34"/>
+    </g>
+    <g fill="#CBD5E1">
+      <circle cx="824" cy="264" r="7"/><circle cx="824" cy="351" r="7"/><circle cx="824" cy="438" r="7"/>
+      <rect x="785" y="493" width="80" height="24" rx="7"/>
+      <circle cx="868" cy="262" r="7" fill="#22C55E"/><circle cx="868" cy="292" r="7" fill="#F59E0B"/>
+    </g>
+    <path d="M321 547h553l-26 31H347z" fill="#94A3B8"/>
+  </g>
+</svg>

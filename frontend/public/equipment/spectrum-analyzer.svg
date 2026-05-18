@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" fill="none">
+  <defs>
+    <linearGradient id="background" x1="115" y1="45" x2="1095" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101A35"/>
+      <stop offset="1" stop-color="#4338CA"/>
+    </linearGradient>
+    <linearGradient id="body" x1="393" y1="120" x2="816" y2="604" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#94A3B8"/>
+    </linearGradient>
+    <linearGradient id="display" x1="465" y1="214" x2="749" y2="411" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071426"/>
+      <stop offset="1" stop-color="#153956"/>
+    </linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0V28" stroke="#38BDF8" stroke-opacity=".15"/>
+    </pattern>
+  </defs>
+  <path fill="url(#background)" d="M0 0h1200v720H0z"/>
+  <circle cx="1025" cy="150" r="190" fill="#C4B5FD" fill-opacity=".1"/>
+  <path d="M90 600h1020M142 626h916" stroke="#DDD6FE" stroke-opacity=".16" stroke-width="2"/>
+  <ellipse cx="600" cy="594" rx="258" ry="31" fill="#090D22" fill-opacity=".4"/>
+  <g transform="rotate(-5 600 360)">
+    <rect x="375" y="108" width="450" height="482" rx="45" fill="#111827" stroke="#CBD5E1" stroke-width="6"/>
+    <rect x="397" y="130" width="406" height="438" rx="32" fill="url(#body)"/>
+    <rect x="444" y="180" width="312" height="239" rx="15" fill="#0F172A"/>
+    <rect x="459" y="195" width="282" height="209" rx="9" fill="url(#display)"/>
+    <rect x="459" y="195" width="282" height="209" rx="9" fill="url(#grid)"/>
+    <path d="M470 365h38l22-8 22-20 20-67 22 42 21 24 20-11 20-83 20 96 20 19 23-20 17-44 20 23h18" stroke="#A3E635" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M472 350h266" stroke="#FBBF24" stroke-opacity=".65" stroke-width="2" stroke-dasharray="5 8"/>
+    <text x="477" y="223" fill="#BAE6FD" font-family="Arial,sans-serif" font-size="14" font-weight="700" letter-spacing="2">RF SPECTRUM</text>
+    <text x="478" y="391" fill="#67E8F9" font-family="Arial,sans-serif" font-size="13">9 kHz  —  3.6 GHz</text>
+    <g fill="#334155" stroke="#64748B" stroke-width="4">
+      <circle cx="492" cy="477" r="25"/><circle cx="565" cy="477" r="25"/><circle cx="638" cy="477" r="25"/>
+    </g>
+    <g fill="#E2E8F0">
+      <circle cx="492" cy="477" r="5"/><circle cx="565" cy="477" r="5"/><circle cx="638" cy="477" r="5"/>
+      <rect x="690" y="451" width="64" height="19" rx="6"/><rect x="690" y="481" width="64" height="19" rx="6"/>
+      <rect x="472" y="523" width="282" height="14" rx="7"/>
+    </g>
+    <path d="M600 108V67" stroke="#CBD5E1" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="600" cy="62" r="11" fill="#38BDF8"/>
+  </g>
+</svg>
