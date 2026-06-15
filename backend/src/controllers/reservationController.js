@@ -73,16 +73,29 @@ exports.createReservation = async (req, res) => {
 
 exports.getReservations = async (req, res) => {
   try {
-    const { status, equipmentId, userId, date } = req.query;
+    const { status, equipmentId, userId, date, view } = req.query;
+    const isStudent = req.user.role === 'student';
+    const isScheduleView = isStudent && view === 'schedule';
     const filter = {};
 
-    if (req.user.role === 'student' && !equipmentId) {
+    if (isScheduleView) {
+      if (userId) {
+        return res.status(403).json({ error: 'Schedule view does not support user filters.' });
+      }
+      if (status && !['pending', 'approved'].includes(status)) {
+        return res.status(400).json({ error: 'Schedule view only includes active reservations.' });
+      }
+      filter.status = status || { $in: ['pending', 'approved'] };
+    } else if (isStudent) {
+      if (userId && userId !== req.user.id) {
+        return res.status(403).json({ error: 'You can only view your own reservations.' });
+      }
       filter.user_id = req.user.id;
     } else if (userId) {
       if (!isValidId(userId)) return res.status(400).json({ error: 'Invalid user ID.' });
       filter.user_id = userId;
     }
-    if (status) filter.status = status;
+    if (status && !isScheduleView) filter.status = status;
     if (equipmentId) {
       if (!isValidId(equipmentId)) return res.status(400).json({ error: 'Invalid equipment ID.' });
       filter.equipment_id = equipmentId;
@@ -95,19 +108,31 @@ exports.getReservations = async (req, res) => {
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(dayStart);
       dayEnd.setDate(dayEnd.getDate() + 1);
-      filter.start_time = { $gte: dayStart, $lt: dayEnd };
+      filter.start_time = { $lt: dayEnd };
+      filter.end_time = { $gt: dayStart };
     }
 
-    const reservations = await Reservation.find(filter)
-      .populate({
-        path: 'equipment_id',
-        select: 'name model category lab_id',
-        populate: { path: 'lab_id', select: 'name code' }
-      })
-      .populate('user_id', 'name email')
-      .sort({ start_time: -1 })
-      .lean();
-    return res.json({ reservations: reservations.map(formatReservation) });
+    let reservationQuery = Reservation.find(filter).populate({
+      path: 'equipment_id',
+      select: 'name model category lab_id',
+      populate: { path: 'lab_id', select: 'name code' }
+    });
+    if (!isScheduleView) {
+      reservationQuery = reservationQuery.populate('user_id', 'name email');
+    }
+    const reservations = await reservationQuery.sort({ start_time: -1 }).lean();
+    const formattedReservations = reservations.map(formatReservation);
+    return res.json({
+      reservations: isScheduleView
+        ? formattedReservations.map((reservation) => ({
+          id: reservation.id,
+          equipment_name: reservation.equipment_name,
+          start_time: reservation.start_time,
+          end_time: reservation.end_time,
+          status: reservation.status
+        }))
+        : formattedReservations
+    });
   } catch (err) {
     console.error('[Get Reservations Error]', err);
     return res.status(500).json({ error: 'Failed to fetch reservations.' });
@@ -132,6 +157,9 @@ exports.updateReservationStatus = async (req, res) => {
       }
       if (status !== 'cancelled') {
         return res.status(403).json({ error: 'Students are only permitted to cancel reservations.' });
+      }
+      if (!['pending', 'approved'].includes(reservation.status)) {
+        return res.status(409).json({ error: 'Only pending or approved reservations can be cancelled.' });
       }
     }
 

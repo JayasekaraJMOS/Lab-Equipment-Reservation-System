@@ -16,7 +16,7 @@ export default function CalendarPage() {
 
   const fetchCalendarReservations = () => {
     setLoading(true);
-    let url = `/reservations?`;
+    let url = `/reservations?view=schedule&`;
     if (selectedEqId) url += `equipmentId=${selectedEqId}&`;
 
     api.get(url)

@@ -45,6 +45,19 @@ function makeReservation(overrides = {}) {
   };
 }
 
+function makeReservationQuery(result, populatePaths = []) {
+  return {
+    populate(path) {
+      populatePaths.push(typeof path === 'string' ? path : path.path);
+      return this;
+    },
+    sort() {
+      return this;
+    },
+    lean: async () => result
+  };
+}
+
 test.afterEach(() => {
   process.env.JWT_SECRET = testJwtSecret;
   Reservation.findById = originalFindById;
@@ -65,6 +78,85 @@ test('requires a configured JWT secret of at least 32 characters', () => {
   } finally {
     process.env.JWT_SECRET = testJwtSecret;
   }
+});
+
+test('students cannot query another user reservation by ID', async () => {
+  let queriedReservations = false;
+  Reservation.find = () => {
+    queriedReservations = true;
+    return makeReservationQuery([]);
+  };
+
+  const res = response();
+  await controller.getReservations({
+    query: { equipmentId: String(new mongoose.Types.ObjectId()), userId: 'another-student' },
+    user: { id: 'student-id', role: 'student' }
+  }, res);
+
+  assert.equal(res.statusCode, 403);
+  assert.equal(queriedReservations, false);
+});
+
+test('equipment filters do not remove the student ownership filter', async () => {
+  let queryFilter;
+  Reservation.find = (filter) => {
+    queryFilter = filter;
+    return makeReservationQuery([]);
+  };
+
+  const res = response();
+  await controller.getReservations({
+    query: { equipmentId: String(new mongoose.Types.ObjectId()) },
+    user: { id: 'student-id', role: 'student' }
+  }, res);
+
+  assert.equal(res.statusCode, 200);
+  assert.equal(queryFilter.user_id, 'student-id');
+});
+
+test('student schedule view returns active reservation times without personal details', async () => {
+  const equipmentId = new mongoose.Types.ObjectId();
+  const reservationId = new mongoose.Types.ObjectId();
+  let queryFilter;
+  const populatePaths = [];
+  Reservation.find = (filter) => {
+    queryFilter = filter;
+    return makeReservationQuery([{
+      _id: reservationId,
+      user_id: { _id: new mongoose.Types.ObjectId(), name: 'Private Name', email: 'private@example.edu' },
+      equipment_id: {
+        _id: equipmentId,
+        name: 'Oscilloscope',
+        model: 'Model 1',
+        category: 'Oscilloscopes',
+        lab_id: { name: 'Signal Lab', code: 'LAB-1' }
+      },
+      start_time: new Date(Date.now() + 60 * 60 * 1000),
+      end_time: new Date(Date.now() + 2 * 60 * 60 * 1000),
+      purpose: 'Private research purpose',
+      admin_notes: 'Private staff note',
+      status: 'pending'
+    }], populatePaths);
+  };
+
+  const res = response();
+  await controller.getReservations({
+    query: { view: 'schedule', equipmentId: String(equipmentId) },
+    user: { id: 'student-id', role: 'student' }
+  }, res);
+
+  assert.equal(res.statusCode, 200);
+  assert.deepEqual(queryFilter.status, { $in: ['pending', 'approved'] });
+  assert.equal(String(queryFilter.equipment_id), String(equipmentId));
+  assert.deepEqual(populatePaths, ['equipment_id']);
+  assert.deepEqual(Object.keys(res.body.reservations[0]).sort(), [
+    'end_time',
+    'equipment_name',
+    'id',
+    'start_time',
+    'status'
+  ]);
+  assert.equal(res.body.reservations[0].equipment_name, 'Oscilloscope');
 });
 
 test('updates a pending reservation with validated details', async () => {
@@ -103,6 +195,21 @@ test('prevents a student from editing another user’s reservation', async () =>
 
   assert.equal(res.statusCode, 403);
   assert.equal(reservation.purpose, 'Original purpose');
+});
+
+test('prevents a student from cancelling a completed reservation', async () => {
+  const reservation = makeReservation({ status: 'completed' });
+  Reservation.findById = async () => reservation;
+
+  const res = response();
+  await controller.updateReservationStatus({
+    params: { id: String(reservation._id) },
+    body: { status: 'cancelled' },
+    user: { id: 'student-id', role: 'student' }
+  }, res);
+
+  assert.equal(res.statusCode, 409);
+  assert.equal(reservation.status, 'completed');
 });
 
 test('prevents deletion of an active reservation', async () => {
