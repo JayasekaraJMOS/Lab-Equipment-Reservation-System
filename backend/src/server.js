@@ -42,8 +42,8 @@ app.use((err, req, res, next) => {
 
 async function startServer() {
   getJwtSecret();
-  await connectDatabase();
-  if (!await User.exists({})) {
+  const dbStatus = await connectDatabase();
+  if (!dbStatus?.isLocalStore && !await User.exists({})) {
     console.log('[Server] MongoDB is empty. Seeding initial data...');
     await seedDatabase();
   }

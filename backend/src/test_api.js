@@ -53,22 +53,23 @@ async function runTests() {
   console.log('✅ Equipment Catalog Count:', catalog.data.equipment.length);
 
   // 4. Create Reservation as Student
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 2);
+  const availableEquipment = catalog.data.equipment.find(e => e.status === 'available') || catalog.data.equipment[0];
+  const testDate = new Date();
+  testDate.setDate(testDate.getDate() + 10);
 
   const newRes = await testEndpoint('/api/reservations', 'POST', {
-    equipment_id: 1,
-    start_time: new Date(tomorrow.setHours(14, 0, 0, 0)).toISOString(),
-    end_time: new Date(tomorrow.setHours(16, 0, 0, 0)).toISOString(),
+    equipment_id: availableEquipment.id,
+    start_time: new Date(testDate.setHours(14, 0, 0, 0)).toISOString(),
+    end_time: new Date(testDate.setHours(16, 0, 0, 0)).toISOString(),
     purpose: 'Oscilloscope testing for EE4207 assignment'
   }, { Authorization: `Bearer ${studentToken}` });
   console.log('✅ Create Reservation:', newRes.status, 'Status:', newRes.data.status, 'Msg:', newRes.data.message);
 
   // 5. Test Collision Rejection (Same equipment, same time)
   const collisionRes = await testEndpoint('/api/reservations', 'POST', {
-    equipment_id: 1,
-    start_time: new Date(tomorrow.setHours(14, 30, 0, 0)).toISOString(),
-    end_time: new Date(tomorrow.setHours(15, 30, 0, 0)).toISOString(),
+    equipment_id: availableEquipment.id,
+    start_time: new Date(testDate.setHours(14, 30, 0, 0)).toISOString(),
+    end_time: new Date(testDate.setHours(15, 30, 0, 0)).toISOString(),
     purpose: 'Conflicting slot attempt'
   }, { Authorization: `Bearer ${studentToken}` });
   console.log('✅ Collision Protection Test (Should fail with 409):', collisionRes.status, collisionRes.data.error ? 'PASSED (Conflict Detected)' : 'FAILED');

@@ -16,3 +16,7 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Runtime Local Data
+backend/data/
+

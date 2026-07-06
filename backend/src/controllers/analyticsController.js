@@ -63,7 +63,12 @@ exports.getAnalytics = async (req, res) => {
 
 exports.reseedData = async (req, res) => {
   try {
-    await seedDatabase({ reset: true });
+    const localStore = require('../models/localStore');
+    if (localStore.isEnabled()) {
+      localStore.reseed();
+    } else {
+      await seedDatabase({ reset: true });
+    }
     return res.json({ message: 'Database reset and re-seeded with original sample data.' });
   } catch (err) {
     console.error('[Database Reseed Error]', err);
