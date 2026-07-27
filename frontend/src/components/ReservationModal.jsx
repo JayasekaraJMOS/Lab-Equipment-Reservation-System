@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { X, Calendar, Clock, AlertTriangle, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { X, Calendar, Clock, AlertTriangle, ShieldCheck, CheckCircle2, Info } from 'lucide-react';
 
 export default function ReservationModal({ equipment, onClose, onSuccess }) {
   const [date, setDate] = useState(new Date(Date.now() + 86400000).toISOString().split('T')[0]);
@@ -10,8 +10,25 @@ export default function ReservationModal({ equipment, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [dayBookings, setDayBookings] = useState([]);
+  const [loadingSchedule, setLoadingSchedule] = useState(false);
 
   if (!equipment) return null;
+
+  const maxHours = equipment.max_hours_per_slot || 8;
+  const hourOptions = Array.from({ length: maxHours }, (_, i) => i + 1);
+
+  // Fetch active bookings for the selected date so the user can see existing reservations
+  useEffect(() => {
+    if (!equipment?.id || !date) return;
+    setLoadingSchedule(true);
+    api.get(`/reservations?equipmentId=${equipment.id}&schedule=true&date=${date}`)
+      .then((res) => {
+        setDayBookings(res.data.reservations || []);
+      })
+      .catch(() => setDayBookings([]))
+      .finally(() => setLoadingSchedule(false));
+  }, [equipment?.id, date]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,6 +60,9 @@ export default function ReservationModal({ equipment, onClose, onSuccess }) {
     }
   };
 
+  const isCollision = error.toLowerCase().includes('conflict') || error.toLowerCase().includes('buffer');
+  const isAuthError = error.toLowerCase().includes('token') || error.toLowerCase().includes('login');
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
       <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 animate-in fade-in zoom-in duration-200">
@@ -63,9 +83,20 @@ export default function ReservationModal({ equipment, onClose, onSuccess }) {
         {error && (
           <div className="mt-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold">Collision Conflict Detected:</p>
-              <p>{error}</p>
+            <div className="flex-1">
+              <p className="font-bold">
+                {isCollision
+                  ? 'Collision Conflict Detected:'
+                  : isAuthError
+                  ? 'Authentication Required:'
+                  : 'Reservation Request Error:'}
+              </p>
+              <p className="mt-0.5 font-medium">{error}</p>
+              {isAuthError && (
+                <a href="/login" className="inline-block mt-2 font-bold text-blue-600 hover:underline">
+                  Go to Login Page &rarr;
+                </a>
+              )}
             </div>
           </div>
         )}
@@ -91,6 +122,42 @@ export default function ReservationModal({ equipment, onClose, onSuccess }) {
             />
           </div>
 
+          {/* Existing Schedule Availability on Selected Date */}
+          <div className="space-y-1">
+            {loadingSchedule ? (
+              <div className="p-2 text-xs text-slate-400 italic">Checking schedule availability...</div>
+            ) : dayBookings.length > 0 ? (
+              <div className="p-3 rounded-xl bg-amber-50/90 border border-amber-200/90 text-xs text-amber-950 space-y-1.5">
+                <div className="flex items-center gap-1.5 font-bold text-amber-900">
+                  <Clock className="w-3.5 h-3.5 text-amber-700" />
+                  Reserved Slots on {date} (15m buffer required):
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {dayBookings.map((b) => {
+                    const s = new Date(b.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const e = new Date(b.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    return (
+                      <span key={b.id} className="px-2 py-0.5 bg-white border border-amber-300 rounded-md font-semibold text-[11px] text-amber-900 shadow-2xs">
+                        🔒 {s} – {e} ({b.status})
+                      </span>
+                    );
+                  })}
+                </div>
+                <p className="text-[11px] text-amber-800">
+                  Tip: Choose a time before or after these intervals with at least a 15-minute gap.
+                </p>
+              </div>
+            ) : (
+              <div className="px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/60 text-xs text-slate-600 flex items-center justify-between">
+                <span className="flex items-center gap-1">
+                  <Info className="w-3.5 h-3.5 text-emerald-600" />
+                  All slots are currently open on {date}.
+                </span>
+                <span className="font-semibold text-slate-700">Max limit: {maxHours} hrs</span>
+              </div>
+            )}
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">Start Time</label>
@@ -103,14 +170,18 @@ export default function ReservationModal({ equipment, onClose, onSuccess }) {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Duration (Hours)</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Duration (Hours) <span className="text-slate-400 font-normal">Max: {maxHours}h</span>
+              </label>
               <select
                 value={durationHours}
                 onChange={(e) => setDurationHours(Number(e.target.value))}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-blue-500 font-medium"
               >
-                {[1, 2, 3, 4, 5, 6].filter(h => h <= equipment.max_hours_per_slot).map(h => (
-                  <option key={h} value={h}>{h} Hour{h > 1 ? 's' : ''}</option>
+                {hourOptions.map((h) => (
+                  <option key={h} value={h}>
+                    {h} Hour{h > 1 ? 's' : ''}
+                  </option>
                 ))}
               </select>
             </div>
