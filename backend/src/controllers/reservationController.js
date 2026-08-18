@@ -42,7 +42,8 @@ exports.createReservation = async (req, res) => {
       });
     }
 
-    const initialStatus = equipment.requires_approval ? 'pending' : 'approved';
+    // All student reservations submit as 'pending' to require staff / technician approval
+    const initialStatus = req.user.role === 'student' || equipment.requires_approval ? 'pending' : 'approved';
     const reservation = await Reservation.create({
       user_id: req.user.id,
       equipment_id,
@@ -50,15 +51,15 @@ exports.createReservation = async (req, res) => {
       end_time: endTime,
       purpose: purpose.trim(),
       status: initialStatus,
-      admin_notes: equipment.requires_approval
-        ? 'Awaiting technician approval'
+      admin_notes: initialStatus === 'pending'
+        ? 'Awaiting technician / supervisor approval'
         : 'Auto-approved by system'
     });
 
     return res.status(201).json({
       message: initialStatus === 'approved'
         ? 'Reservation confirmed and auto-approved!'
-        : 'Reservation request submitted. Awaiting supervisor approval.',
+        : 'Reservation request submitted! Awaiting technician / supervisor approval.',
       reservationId: String(reservation._id),
       status: initialStatus
     });

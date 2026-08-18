@@ -195,26 +195,7 @@ function createInitialData() {
     }
   ];
 
-  const tomorrowStart = new Date();
-  tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-  tomorrowStart.setHours(10, 0, 0, 0);
-  const tomorrowEnd = new Date(tomorrowStart);
-  tomorrowEnd.setHours(12, 0, 0, 0);
-
-  const reservations = [
-    {
-      _id: newId(),
-      user_id: userIds[0],
-      equipment_id: equipment[0]._id,
-      start_time: tomorrowStart.toISOString(),
-      end_time: tomorrowEnd.toISOString(),
-      purpose: 'EE4207 Microprocessor Signal Analysis Lab Experiment',
-      status: 'approved',
-      admin_notes: 'Approved by Dr. Vance',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
-  ];
+  const reservations = [];
 
   return {
     users,
