@@ -1,6 +1,6 @@
 # Smart Lab Equipment Reservation System (LabReserve)
 
-**Module:** EE4207 – Web Application Development  
+**Module:** EC4307 / EE4207 – Web Application Development  
 **Project type:** Mini project  
 **Student name:** [Add your name]  
 **Index number:** [Add your index number]  
