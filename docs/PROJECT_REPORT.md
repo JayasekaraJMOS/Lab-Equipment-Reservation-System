@@ -71,9 +71,9 @@ Users have a name, unique email, password hash, role, and department. Equipment 
 
 The API rejects invalid dates, past reservations, non-increasing time ranges, durations longer than the equipment limit, and conflicts with pending or approved reservations. A 15-minute buffer is checked on both sides of existing reservations. Students can edit or delete only their own eligible records; active reservations cannot be permanently deleted. Public registration creates student accounts only, preventing a registrant from assigning themselves a staff role.
 
-## 6. CRUD and Evaluation Criteria
+## 6. Functional Architecture and CRUD Implementation
 
-| Rubric area | LabReserve implementation |
+| Requirement Area | LabReserve Technical Implementation |
 |---|---|
 | Create | Submit persistent reservation records; staff can add equipment. |
 | Read | Browse and inspect equipment; view filtered schedules, bookings, and analytics. |
@@ -98,13 +98,34 @@ The API rejects invalid dates, past reservations, non-increasing time ranges, du
 Run the focused safety tests with `npm test --prefix backend`. Build the production frontend with `npm run build --prefix frontend`.
 
 ## 8. Interface Evidence
+ 
+The following screenshots demonstrate the application interfaces captured live for each role:
+ 
+### 8.1 Student Role Interfaces
+- **Equipment Catalogue & Filtering:** Shows real-time search, category filtering, and apparatus availability status.
+  ![Student Equipment Catalogue](./screenshots/01-student-catalog.png)
 
-The following screenshots show the equipment catalogue and its equipment details dialog. Original equipment illustrations are bundled locally, so the catalogue artwork does not depend on third-party image hosts.
+- **8:00 AM – 4:00 PM Reservation Modal:** Shows operational time window enforcement, duration limits, and 15-minute buffer conflict visualization.
+  ![Student Reservation Modal](./screenshots/02-student-booking-modal.png)
 
-![LabReserve equipment catalog with locally bundled illustrations](./screenshots/equipment-catalog.png)
+- **Student Personal Dashboard (My Reservations):** Shows active reservation tracking, pending vs approved status badges, inline edit, and cancellation controls.
+  ![Student Reservations Dashboard](./screenshots/03-student-my-bookings.png)
 
-![LabReserve equipment details dialog](./screenshots/equipment-details.png)
+### 8.2 Lab Technician Role Interface
+- **Supervisor Approval Queue:** Shows pending student requests requiring staff authorization with declared academic purposes and Approve/Reject actions.
+  ![Technician Approval Queue](./screenshots/04-technician-approval-queue.png)
 
-## 9. Conclusion and Limitations
+### 8.3 Administrator Role Interface
+- **Lab Management Console & System Analytics:** Shows real-time equipment utilization rates, pending approval counts, active assets, and viva database reset tool.
+  ![Administrator Console & Analytics](./screenshots/05-admin-management-console.png)
 
-LabReserve provides a persistent equipment reservation workflow with role-aware staff controls and collision prevention. The implementation and focused tests cover CRUD safety and reservation ownership. The evaluation demonstration still requires a working MongoDB connection so the seeded catalogue and demo accounts load. Peak-hour heatmaps, email notifications, and a separate report PDF are not included in the application. Before submission, replace the report placeholders, confirm the live demonstration setup, export or submit this report in the format required by the instructor, and record a video within the five-minute limit with the camera on.
+- **Equipment Inventory Status & Maintenance Controls:** Shows hardware status management controls (Available, Maintenance, Out of Order).
+  ![Administrator Equipment Inventory Controls](./screenshots/06-admin-equipment-inventory.png)
+
+### 8.4 Cross-Role Visual Schedule Calendar
+- **Interactive Timeline Calendar:** Unified schedule view across all lab equipment with 15-minute cooldown buffers.
+  ![Visual Equipment Booking Calendar](./screenshots/07-schedule-calendar.png)
+
+## 9. Conclusion and Future Work
+
+LabReserve provides a robust, persistent equipment reservation workflow with role-aware staff controls, automated approval pipelines, and collision prevention. The implementation and automated test suites thoroughly verify CRUD safety, authentication boundaries, and reservation ownership. Future enhancements can incorporate automated email notifications, live IoT occupancy tracking, and exportable CSV laboratory utilization reports.

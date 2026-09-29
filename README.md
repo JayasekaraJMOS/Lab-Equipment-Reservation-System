@@ -5,7 +5,7 @@ LabReserve is a MERN stack web application developed for **EC4307 / EE4207 – W
 
 ---
 
-### 🚀 Quick Start Guide (Viva Demonstration)
+### 🚀 Quick Start Guide
 
 #### Step 1: Start Backend API Server
 Make sure MongoDB is running locally or set `MONGODB_URI` to a MongoDB Atlas connection string. Copy `backend/.env.example` to `backend/.env`, configure the database connection, and replace `JWT_SECRET` with a private random value at least 32 characters long. The backend refuses to start with a missing or weak JWT secret instead of using a built-in fallback.
@@ -27,8 +27,8 @@ npm run dev
 
 ---
 
-### ⚡ 1-Click Viva Demo User Accounts
-During the project demonstration/viva, you can click the top banner buttons to instantly log in as any role:
+### ⚡ Pre-configured Demo User Accounts
+For testing and demonstration, the following role-based accounts are pre-seeded in the database:
 
 | Role | Demo Email | Password | Access Rights |
 | :--- | :--- | :--- | :--- |
@@ -76,22 +76,36 @@ erDiagram
 
 Mongoose stores users, equipment, labs, reservations, and maintenance logs in MongoDB. ObjectId references connect related records. See [PROJECT_PROPOSAL.md](./PROJECT_PROPOSAL.md) for the detailed entity relationship diagram and project design.
 
-### 🖼️ Interface Screenshots
-These screenshots show the running React application with sample equipment based on the project seed data:
+### 🖼️ Role-Based Interface Screenshots
 
-![LabReserve equipment catalog with sample equipment](./docs/screenshots/equipment-catalog.png)
+The application provides distinct interfaces and privileges tailored for each university role:
 
-![LabReserve equipment details dialog](./docs/screenshots/equipment-details.png)
+#### 1. 🎓 Student Role Interface
+* **Equipment Catalogue & Filtering:** Real-time search, category filters, and live equipment availability status.
+  ![Student Equipment Catalog](./docs/screenshots/01-student-catalog.png)
 
-### 📋 Evaluation Submission Checklist
-- Submit the GitHub repository link using the course Google Sheet.
-- Submit a project report of no more than 10 pages, including interface screenshots.
-- Submit a demonstration video of no more than 5 minutes with the camera on.
-- Use your index number when naming submission files.
-- The rubric lists **31 October 2026** as the deadline.
-- A concise report draft is available at [docs/PROJECT_REPORT.md](./docs/PROJECT_REPORT.md); replace its student, index, and repository placeholders before submitting.
+* **8:00 AM – 4:00 PM Reservation Modal:** Strict lab hour enforcement, duration selector, 15-minute buffer visualization, and project purpose input.
+  ![Student Reservation Modal](./docs/screenshots/02-student-booking-modal.png)
 
+* **Student Personal Dashboard (My Reservations):** Real-time tracking of pending and approved bookings, inline editing, and safe cancellation.
+  ![Student My Reservations Dashboard](./docs/screenshots/03-student-my-bookings.png)
+
+#### 2. 🔬 Lab Technician Role Interface
+* **Supervisor Approval Queue:** Review incoming student reservation requests, verify declared experiment purposes, and authorize or reject bookings.
+  ![Technician Approval Queue](./docs/screenshots/04-technician-approval-queue.png)
+
+#### 3. ⚡ Administrator Role Interface
+* **Lab Management Console & System Analytics:** Real-time equipment utilization rates, pending approval counts, active assets, and viva database reset tool.
+  ![Administrator Management Console & Analytics](./docs/screenshots/05-admin-management-console.png)
+
+* **Equipment Inventory Status & Maintenance Controls:** Direct hardware status overrides (Available, Maintenance, Out of Order).
+  ![Administrator Equipment Inventory Controls](./docs/screenshots/06-admin-equipment-inventory.png)
+
+#### 4. 📅 Unified Schedule Calendar
+* **Visual Reservation Timeline:** Department-wide timeline displaying reserved intervals with enforced 15-minute cooldown buffers.
+  ![Visual Equipment Booking Calendar](./docs/screenshots/07-schedule-calendar.png)
 ---
+
 
 ### 📁 Repository Structure
 ```
