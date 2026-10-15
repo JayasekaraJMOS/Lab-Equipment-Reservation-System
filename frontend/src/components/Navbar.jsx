@@ -21,31 +21,31 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      {/* Viva Demo Quick Switch Banner */}
+      {/* Role Switcher Banner */}
       <div className="bg-slate-900 text-slate-300 text-xs px-4 py-1.5 flex flex-wrap items-center justify-between gap-2 border-b border-slate-800">
         <div className="flex items-center gap-1.5 font-medium">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span className="text-white font-semibold">EE4207 Viva Demo Mode:</span>
-          <span>Switch User Roles instantly:</span>
+          <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+          <span className="text-white font-semibold">Simulation Mode:</span>
+          <span className="text-slate-400">Switch active user role:</span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleDemoSwitch('student')}
-            className={`px-2 py-0.5 rounded text-xs font-medium transition ${user?.role === 'student' ? 'bg-blue-600 text-white font-semibold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            className={`px-2.5 py-0.5 rounded text-xs font-medium transition ${user?.role === 'student' ? 'bg-blue-600 text-white font-semibold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
           >
-            🎓 Student Demo
+            🎓 Student
           </button>
           <button
             onClick={() => handleDemoSwitch('tech')}
-            className={`px-2 py-0.5 rounded text-xs font-medium transition ${user?.role === 'tech' ? 'bg-emerald-600 text-white font-semibold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            className={`px-2.5 py-0.5 rounded text-xs font-medium transition ${user?.role === 'tech' ? 'bg-emerald-600 text-white font-semibold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
           >
-            🔬 Lab Tech Demo
+            🔬 Lab Tech
           </button>
           <button
             onClick={() => handleDemoSwitch('admin')}
-            className={`px-2 py-0.5 rounded text-xs font-medium transition ${user?.role === 'admin' ? 'bg-purple-600 text-white font-semibold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
+            className={`px-2.5 py-0.5 rounded text-xs font-medium transition ${user?.role === 'admin' ? 'bg-purple-600 text-white font-semibold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}
           >
-            ⚡ Admin Demo
+            ⚡ Admin
           </button>
         </div>
       </div>

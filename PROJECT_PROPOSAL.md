@@ -162,12 +162,12 @@ erDiagram
 | **Phase 2: Backend Development** | Week 3 - 4 | Express setup, MongoDB schemas, Auth middleware (JWT), CRUD endpoints for Equipment & Reservations, Booking collision algorithm. |
 | **Phase 3: Frontend Development** | Week 5 - 6 | React UI components, Login/Register pages, Equipment Catalog, FullCalendar integration, User/Admin Dashboards. |
 | **Phase 4: Integration & Testing** | Week 7 - 8 | Connecting Frontend to REST API, input validation, role testing, edge case handling (overlapping slots). |
-| **Phase 5: Deployment & Viva Prep** | Week 9 | Hosting (Render + Vercel), preparing demo script & presentation slides for viva evaluation. |
+| **Phase 5: Deployment & Documentation** | Week 9 | System deployment, final testing, API documentation, and presentation materials. |
 
 ---
 
 ### **8. Expected Deliverables**
 1. **Fully Functional Full-Stack Web Application** (Frontend SPA + Backend RESTful API + Database).
 2. **Source Code Repository** (Structured cleanly with documentation and `README.md`).
-3. **Live Demonstration / Project Presentation** ready for EE4207 Viva evaluation.
-4. **User & Admin Manual / API Documentation**.
+3. **Live Demonstration / Project Presentation** for project evaluation.
+4. **User & Admin Manual / Technical Documentation**.

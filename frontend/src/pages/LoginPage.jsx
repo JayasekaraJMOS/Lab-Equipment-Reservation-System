@@ -73,16 +73,16 @@ export default function LoginPage() {
             {isRegister ? 'Create Your Account' : 'Sign In to LabReserve'}
           </h2>
           <p className="text-xs text-slate-500">
-            EE4207 Web Application Development Portal
+            University Laboratory Equipment Portal
           </p>
         </div>
 
-        {/* 1-Click Viva Demo Section */}
+        {/* Demo Accounts Section */}
         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 space-y-2.5">
           <div className="flex items-center justify-between text-xs font-bold text-slate-700">
             <span className="flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              1-Click Viva Demo Quick Login:
+              <Sparkles className="w-3.5 h-3.5 text-blue-500" />
+              Quick Sign-In (Demo Accounts):
             </span>
           </div>
           <div className="grid grid-cols-3 gap-2">

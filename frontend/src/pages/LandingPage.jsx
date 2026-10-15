@@ -69,10 +69,10 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            {/* Quick Demo Buttons for Viva Evaluation */}
+            {/* Demo Accounts Section */}
             <div className="pt-8 border-t border-slate-200/60 max-w-xl mx-auto">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-3">
-                ⚡ 1-Click Viva Demo Accounts (Instant Login)
+                ⚡ Demo Accounts (Quick Sign-In)
               </span>
               <div className="grid grid-cols-3 gap-3">
                 <button
@@ -80,21 +80,21 @@ export default function LandingPage() {
                   className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 hover:border-blue-400 text-slate-800 font-semibold text-xs shadow-2xs hover:shadow-md transition flex flex-col items-center gap-1"
                 >
                   <span className="text-base">🎓</span>
-                  <span>Student Demo</span>
+                  <span>Student</span>
                 </button>
                 <button
                   onClick={() => handleQuickDemo('tech')}
                   className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 hover:border-emerald-400 text-slate-800 font-semibold text-xs shadow-2xs hover:shadow-md transition flex flex-col items-center gap-1"
                 >
                   <span className="text-base">🔬</span>
-                  <span>Lab Tech Demo</span>
+                  <span>Lab Tech</span>
                 </button>
                 <button
                   onClick={() => handleQuickDemo('admin')}
                   className="py-2.5 px-3 rounded-xl bg-white border border-slate-200 hover:border-purple-400 text-slate-800 font-semibold text-xs shadow-2xs hover:shadow-md transition flex flex-col items-center gap-1"
                 >
                   <span className="text-base">⚡</span>
-                  <span>Admin Demo</span>
+                  <span>Administrator</span>
                 </button>
               </div>
             </div>

@@ -95,7 +95,7 @@ The application provides distinct interfaces and privileges tailored for each un
   ![Technician Approval Queue](./docs/screenshots/04-technician-approval-queue.png)
 
 #### 3. ⚡ Administrator Role Interface
-* **Lab Management Console & System Analytics:** Real-time equipment utilization rates, pending approval counts, active assets, and viva database reset tool.
+* **Lab Management Console & System Analytics:** Real-time equipment utilization rates, pending approval counts, active assets, and database management tools.
   ![Administrator Management Console & Analytics](./docs/screenshots/05-admin-management-console.png)
 
 * **Equipment Inventory Status & Maintenance Controls:** Direct hardware status overrides (Available, Maintenance, Out of Order).
@@ -106,12 +106,11 @@ The application provides distinct interfaces and privileges tailored for each un
   ![Visual Equipment Booking Calendar](./docs/screenshots/07-schedule-calendar.png)
 ---
 
-
 ### 📁 Repository Structure
 ```
 Web Development/
 ├── PROJECT_PROPOSAL.md        # Technical project proposal submitted for EE4207
-├── README.md                  # Quick start guide & viva instructions
+├── README.md                  # Technical documentation and setup guide
 ├── backend/                   # Node.js + Express REST API
 │   ├── src/
 │   │   ├── controllers/       # Auth, Equipment, Reservation, Analytics handlers
@@ -124,7 +123,7 @@ Web Development/
 └── frontend/                  # React (Vite) SPA
     ├── src/
     │   ├── components/        # Navbar, StatusBadge, EquipmentCard, Modals
-    │   ├── context/           # AuthContext for session & viva demo switching
+    │   ├── context/           # Authentication context and state management
     │   ├── pages/             # Landing, Catalog, Calendar, MyBookings, AdminPortal
     │   └── services/          # Axios API client
 ```

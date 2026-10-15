@@ -55,7 +55,7 @@ export default function AdminPortalPage() {
   };
 
   const handleReseedDb = async () => {
-    if (!window.confirm('Reset database to initial sample state for Viva demonstration?')) return;
+    if (!window.confirm('Reset database to initial sample records?')) return;
     try {
       await api.post('/seed');
       loadData();
@@ -83,10 +83,10 @@ export default function AdminPortalPage() {
           <button
             onClick={handleReseedDb}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 font-bold text-xs hover:bg-amber-100 transition"
-            title="Reset DB for viva demo"
+            title="Reset sample records"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset Viva Demo DB
+            Reset Sample Data
           </button>
           <button
             onClick={loadData}

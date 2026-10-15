@@ -28,7 +28,7 @@ router.patch('/reservations/:id', authenticateToken, reservationController.updat
 router.patch('/reservations/:id/status', authenticateToken, reservationController.updateReservationStatus);
 router.delete('/reservations/:id', authenticateToken, reservationController.deleteReservation);
 
-// --- Analytics & Viva Admin Routes ---
+// --- Analytics & System Maintenance Routes ---
 router.get('/analytics', authenticateToken, requireRole(['tech', 'admin']), analyticsController.getAnalytics);
 router.post('/seed', authenticateToken, requireRole(['admin']), analyticsController.reseedData);
 
