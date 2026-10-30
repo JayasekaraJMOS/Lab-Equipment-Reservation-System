@@ -1,6 +1,8 @@
 const User = require('../models/User');
+const Lab = require('../models/Lab');
 const Equipment = require('../models/Equipment');
 const Reservation = require('../models/Reservation');
+const MaintenanceLog = require('../models/MaintenanceLog');
 const seedDatabase = require('../models/seed');
 
 async function countByField(Model, field, values) {
@@ -15,20 +17,37 @@ async function countByField(Model, field, values) {
 
 exports.getAnalytics = async (req, res) => {
   try {
-    const [totalUsers, totalEquipment, totalReservations, equipmentByStatus, reservationsByStatus, recent] =
-      await Promise.all([
-        User.countDocuments(),
-        Equipment.countDocuments(),
-        Reservation.countDocuments(),
-        countByField(Equipment, 'status', ['available', 'maintenance', 'out_of_order']),
-        countByField(Reservation, 'status', ['pending', 'approved', 'rejected', 'completed', 'cancelled']),
-        Reservation.find()
-          .populate('equipment_id', 'name')
-          .populate('user_id', 'name')
-          .sort({ created_at: -1 })
-          .limit(5)
-          .lean()
-      ]);
+    const [
+      totalUsers,
+      totalLabs,
+      totalEquipment,
+      totalReservations,
+      totalMaintenanceLogs,
+      equipmentByStatus,
+      reservationsByStatus,
+      recent,
+      recentMaintenanceLogs
+    ] = await Promise.all([
+      User.countDocuments(),
+      Lab.countDocuments(),
+      Equipment.countDocuments(),
+      Reservation.countDocuments(),
+      MaintenanceLog.countDocuments(),
+      countByField(Equipment, 'status', ['available', 'maintenance', 'out_of_order']),
+      countByField(Reservation, 'status', ['pending', 'approved', 'rejected', 'completed', 'cancelled']),
+      Reservation.find()
+        .populate('equipment_id', 'name')
+        .populate('user_id', 'name')
+        .sort({ created_at: -1 })
+        .limit(5)
+        .lean(),
+      MaintenanceLog.find()
+        .populate('equipment_id', 'name')
+        .populate('technician_id', 'name')
+        .sort({ created_at: -1 })
+        .limit(5)
+        .lean()
+    ]);
 
     const activeReservationsCount = reservationsByStatus.approved + reservationsByStatus.pending;
     const utilizationRate = totalEquipment > 0
@@ -38,8 +57,10 @@ exports.getAnalytics = async (req, res) => {
     return res.json({
       summary: {
         totalUsers,
+        totalLabs,
         totalEquipment,
         totalReservations,
+        totalMaintenanceLogs,
         utilizationRate,
         pendingApprovals: reservationsByStatus.pending,
         underMaintenance: equipmentByStatus.maintenance
@@ -53,6 +74,14 @@ exports.getAnalytics = async (req, res) => {
         status: reservation.status,
         startTime: reservation.start_time,
         endTime: reservation.end_time
+      })),
+      recentMaintenanceLogs: recentMaintenanceLogs.map((log) => ({
+        id: String(log._id),
+        equipment: log.equipment_id ? log.equipment_id.name : 'Unknown Equipment',
+        technician: log.technician_id ? log.technician_id.name : 'Unknown Technician',
+        issue: log.issue_description,
+        status: log.status,
+        createdAt: log.created_at
       }))
     });
   } catch (err) {

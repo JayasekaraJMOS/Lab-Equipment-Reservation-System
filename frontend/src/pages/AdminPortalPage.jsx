@@ -1,25 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
-import { ShieldCheck, Activity, Clock, Wrench, Check, X, RefreshCw, Plus, AlertOctagon, RotateCcw } from 'lucide-react';
+import { ShieldCheck, Activity, Clock, Wrench, Check, X, RefreshCw, Plus, AlertOctagon, RotateCcw, Database, FlaskConical } from 'lucide-react';
+
+const EMPTY_EQ_FORM = {
+  name: '', category: 'Oscilloscopes', model: '', serial_number: '',
+  max_hours_per_slot: 4, requires_approval: true, description: '', specs: '', lab_id: ''
+};
+
+const EQ_CATEGORIES = [
+  'Oscilloscopes', 'Power Supplies', 'Signal Generators', 'Spectrum Analyzers',
+  '3D Printers', 'Microcontrollers', 'PCB Equipment', 'Test & Measurement', 'Other'
+];
 
 export default function AdminPortalPage() {
   const [analytics, setAnalytics] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [equipmentList, setEquipmentList] = useState([]);
+  const [labs, setLabs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('approvals'); // approvals | equipment | analytics
+  const [activeTab, setActiveTab] = useState('approvals'); // approvals | equipment | commission
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [eqForm, setEqForm] = useState(EMPTY_EQ_FORM);
+  const [eqFormError, setEqFormError] = useState('');
+  const [eqFormLoading, setEqFormLoading] = useState(false);
 
   const loadData = () => {
     setLoading(true);
     Promise.all([
       api.get('/analytics'),
       api.get('/reservations'),
-      api.get('/equipment')
-    ]).then(([analyticsRes, resRes, eqRes]) => {
+      api.get('/equipment'),
+      api.get('/labs')
+    ]).then(([analyticsRes, resRes, eqRes, labsRes]) => {
       setAnalytics(analyticsRes.data);
       setReservations(resRes.data.reservations);
       setEquipmentList(eqRes.data.equipment);
+      setLabs(labsRes.data.labs || []);
     }).catch(console.error)
       .finally(() => setLoading(false));
   };
@@ -65,6 +82,27 @@ export default function AdminPortalPage() {
     }
   };
 
+  const handleAddEquipment = async (e) => {
+    e.preventDefault();
+    setEqFormError('');
+    if (!eqForm.lab_id) { setEqFormError('Please select a lab for this equipment.'); return; }
+    setEqFormLoading(true);
+    try {
+      await api.post('/equipment', {
+        ...eqForm,
+        requires_approval: eqForm.requires_approval === true || eqForm.requires_approval === 'true',
+        max_hours_per_slot: Number(eqForm.max_hours_per_slot)
+      });
+      setShowAddModal(false);
+      setEqForm(EMPTY_EQ_FORM);
+      loadData();
+    } catch (err) {
+      setEqFormError(err.response?.data?.error || 'Failed to commission new equipment.');
+    } finally {
+      setEqFormLoading(false);
+    }
+  };
+
   const pendingReservations = reservations.filter(r => r.status === 'pending');
 
   return (
@@ -98,56 +136,70 @@ export default function AdminPortalPage() {
         </div>
       </div>
 
-      {/* Analytics Metric Cards */}
+      {/* Analytics Metric Cards – 5 MongoDB Collections */}
       {analytics && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
-            <div>
-              <span className="text-xs text-slate-500 font-medium block">Utilization Rate</span>
-              <span className="text-2xl font-extrabold text-slate-900 mt-1 block">
-                {analytics.summary.utilizationRate}%
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
-              <Activity className="w-5 h-5" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-1">
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Utilization</span>
+            <span className="text-2xl font-extrabold text-slate-900">{analytics.summary.utilizationRate}%</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mt-auto">
+              <Activity className="w-4 h-4" />
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
-            <div>
-              <span className="text-xs text-slate-500 font-medium block">Pending Approvals</span>
-              <span className="text-2xl font-extrabold text-amber-600 mt-1 block">
-                {analytics.summary.pendingApprovals}
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-              <Clock className="w-5 h-5" />
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-1">
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Pending</span>
+            <span className="text-2xl font-extrabold text-amber-600">{analytics.summary.pendingApprovals}</span>
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mt-auto">
+              <Clock className="w-4 h-4" />
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
-            <div>
-              <span className="text-xs text-slate-500 font-medium block">Equipment In Maintenance</span>
-              <span className="text-2xl font-extrabold text-slate-900 mt-1 block">
-                {analytics.summary.underMaintenance}
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
-              <Wrench className="w-5 h-5" />
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-1">
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Maintenance</span>
+            <span className="text-2xl font-extrabold text-rose-600">{analytics.summary.underMaintenance}</span>
+            <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center mt-auto">
+              <Wrench className="w-4 h-4" />
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs flex items-center justify-between">
-            <div>
-              <span className="text-xs text-slate-500 font-medium block">Total Registered Assets</span>
-              <span className="text-2xl font-extrabold text-slate-900 mt-1 block">
-                {analytics.summary.totalEquipment}
-              </span>
-            </div>
-            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-              <ShieldCheck className="w-5 h-5" />
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-1">
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Assets</span>
+            <span className="text-2xl font-extrabold text-slate-900">{analytics.summary.totalEquipment}</span>
+            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mt-auto">
+              <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
+
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-1">
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Registered Users</span>
+            <span className="text-2xl font-extrabold text-slate-900">{analytics.summary.totalUsers}</span>
+            <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center mt-auto">
+              <Database className="w-4 h-4" />
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col gap-1">
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Maint. Logs</span>
+            <span className="text-2xl font-extrabold text-slate-900">{analytics.summary.totalMaintenanceLogs ?? 0}</span>
+            <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center mt-auto">
+              <FlaskConical className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5 Collections Label */}
+      {analytics && (
+        <div className="flex items-center gap-2 -mt-4">
+          <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+            Real-time metrics aggregated across 5 MongoDB collections:
+          </p>
+          {['Users', 'Labs', 'Equipment', 'Reservations', 'Maintenance Logs'].map((col) => (
+            <span key={col} className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200">
+              {col}
+            </span>
+          ))}
         </div>
       )}
 
@@ -169,6 +221,13 @@ export default function AdminPortalPage() {
           className={`pb-3 border-b-2 flex items-center gap-2 ${activeTab === 'equipment' ? 'border-purple-600 text-purple-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
         >
           Equipment Inventory Control
+        </button>
+        <button
+          onClick={() => { setActiveTab('commission'); setShowAddModal(true); }}
+          className={`pb-3 border-b-2 flex items-center gap-2 ${activeTab === 'commission' ? 'border-purple-600 text-purple-600' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Commission Hardware
         </button>
       </div>
 
@@ -225,8 +284,15 @@ export default function AdminPortalPage() {
       {/* Tab 2: Equipment Inventory Control */}
       {activeTab === 'equipment' && (
         <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
-          <div className="p-5 border-b border-slate-100 font-bold text-slate-900 text-sm">
-            Lab Machinery Status & Maintenance Controls
+          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+            <span className="font-bold text-slate-900 text-sm">Lab Machinery Status &amp; Maintenance Controls</span>
+            <button
+              onClick={() => { setShowAddModal(true); setActiveTab('commission'); }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 shadow-sm"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Commission New Hardware
+            </button>
           </div>
           <div className="divide-y divide-slate-100">
             {equipmentList.map(item => (
@@ -262,6 +328,130 @@ export default function AdminPortalPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Recent Maintenance Logs (Equipment tab companion – shows MaintenanceLog collection data) */}
+      {activeTab === 'equipment' && analytics?.recentMaintenanceLogs?.length > 0 && (
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div className="p-5 border-b border-slate-100 flex items-center gap-2">
+            <Wrench className="w-4 h-4 text-amber-600" />
+            <span className="font-bold text-slate-900 text-sm">Recent Maintenance Log Entries</span>
+            <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 font-bold border border-orange-200">MaintenanceLogs Collection</span>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {analytics.recentMaintenanceLogs.map((log) => (
+              <div key={log.id} className="p-4 flex items-start justify-between gap-4 hover:bg-slate-50/80">
+                <div className="space-y-0.5">
+                  <p className="text-xs font-bold text-slate-900">{log.equipment}</p>
+                  <p className="text-xs text-slate-500">
+                    Issue: <span className="text-slate-700 font-medium">{log.issue}</span>
+                  </p>
+                  <p className="text-xs text-slate-400">Logged by: {log.technician}</p>
+                </div>
+                <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${log.status === 'resolved' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                  {log.status === 'resolved' ? 'Resolved' : 'Under Repair'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Commission New Hardware Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 my-4">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">
+                  Admin Action
+                </span>
+                <h2 className="text-lg font-bold text-slate-900 mt-1">Commission New Laboratory Hardware</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Registers new equipment into the shared pool and makes it immediately bookable.</p>
+              </div>
+              <button onClick={() => { setShowAddModal(false); setEqForm(EMPTY_EQ_FORM); setEqFormError(''); setActiveTab('equipment'); }}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {eqFormError && (
+              <div className="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
+                ⚠ {eqFormError}
+              </div>
+            )}
+
+            <form onSubmit={handleAddEquipment} className="mt-4 space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <label className="col-span-2 font-semibold text-slate-700">
+                  Equipment Name *
+                  <input required value={eqForm.name} onChange={e => setEqForm({...eqForm, name: e.target.value})}
+                    placeholder="e.g., Keysight DSOX1204G Oscilloscope"
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 font-normal" />
+                </label>
+                <label className="font-semibold text-slate-700">
+                  Category *
+                  <select required value={eqForm.category} onChange={e => setEqForm({...eqForm, category: e.target.value})}
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 font-normal">
+                    {EQ_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </label>
+                <label className="font-semibold text-slate-700">
+                  Model
+                  <input value={eqForm.model} onChange={e => setEqForm({...eqForm, model: e.target.value})}
+                    placeholder="e.g., DSOX1204G"
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 font-normal" />
+                </label>
+                <label className="font-semibold text-slate-700">
+                  Serial Number *
+                  <input required value={eqForm.serial_number} onChange={e => setEqForm({...eqForm, serial_number: e.target.value})}
+                    placeholder="e.g., SN-OSC-2024-009"
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 font-normal" />
+                </label>
+                <label className="font-semibold text-slate-700">
+                  Assign to Lab *
+                  <select required value={eqForm.lab_id} onChange={e => setEqForm({...eqForm, lab_id: e.target.value})}
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 font-normal">
+                    <option value="">— Select Lab —</option>
+                    {labs.map(l => <option key={l.id} value={l.id}>{l.name} ({l.code})</option>)}
+                  </select>
+                </label>
+                <label className="font-semibold text-slate-700">
+                  Max Hours / Slot
+                  <select value={eqForm.max_hours_per_slot} onChange={e => setEqForm({...eqForm, max_hours_per_slot: Number(e.target.value)})}
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 font-normal">
+                    {[1,2,3,4,6,8].map(h => <option key={h} value={h}>{h} hour{h>1?'s':''}</option>)}
+                  </select>
+                </label>
+                <label className="col-span-2 font-semibold text-slate-700">
+                  Description
+                  <textarea rows={2} value={eqForm.description}
+                    onChange={e => setEqForm({...eqForm, description: e.target.value})}
+                    placeholder="Brief description of the instrument's capabilities and usage."
+                    className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-slate-900 font-normal" />
+                </label>
+                <label className="col-span-2 flex items-center gap-2 font-semibold text-slate-700 cursor-pointer select-none">
+                  <input type="checkbox" checked={eqForm.requires_approval}
+                    onChange={e => setEqForm({...eqForm, requires_approval: e.target.checked})}
+                    className="w-4 h-4 rounded accent-purple-600" />
+                  Requires Supervisor Approval before use
+                </label>
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button type="button"
+                  onClick={() => { setShowAddModal(false); setEqForm(EMPTY_EQ_FORM); setEqFormError(''); setActiveTab('equipment'); }}
+                  className="px-4 py-2 rounded-xl text-slate-600 font-semibold text-xs hover:bg-slate-100">
+                  Cancel
+                </button>
+                <button type="submit" disabled={eqFormLoading}
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 shadow-md disabled:opacity-50">
+                  <Plus className="w-3.5 h-3.5" />
+                  {eqFormLoading ? 'Commissioning...' : 'Commission Equipment'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
