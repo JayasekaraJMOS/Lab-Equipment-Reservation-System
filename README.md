@@ -1,7 +1,7 @@
-# EC4307 / EE4207 – Web Application Development
+# EC4307 – Web Application Development
 ## Smart Lab Equipment Reservation System (LabReserve)
 
-LabReserve is a MERN stack web application developed for **EC4307 / EE4207 – Web Application Development**. It automates the scheduling, reservation, approval, and maintenance tracking of specialized university laboratory equipment (Oscilloscopes, 3D Printers, Spectrum Analyzers, and AI Workstations) using MongoDB, Express.js, React, and Node.js.
+LabReserve is a MERN stack web application developed for **EC4307 – Web Application Development**. It automates the scheduling, reservation, approval, and maintenance tracking of specialized university laboratory equipment (Oscilloscopes, 3D Printers, Spectrum Analyzers, and AI Workstations) using MongoDB, Express.js, React, and Node.js.
 
 ---
 
